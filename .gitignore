@@ -4,6 +4,7 @@
 *.tar.gz
 chromedriver
 geckodriver
+table_of_content.json
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
