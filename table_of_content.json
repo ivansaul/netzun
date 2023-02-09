@@ -1,0 +1,36 @@
+[
+
+    {
+        "titulo": "Módulo 2: Proveedores y cotizaciones internacionales",
+        "n_cap": "5 Cápsulas",
+        "capsulas": [
+            
+            {
+                "cap_titulo": "Cápsula 4. Tratamiento arancelario",
+                "url": "https://netzun.com/mis-contenidos/cursos/261/1265/4352",
+                "vimeo_player_url": "https://player.vimeo.com/video/503727174?h=f818bd11aa&app_id=122963"
+            },
+            {
+                "cap_titulo": "Cápsula 5. Cálculo de los derechos e impuestos de importación",
+                "url": "https://netzun.com/mis-contenidos/cursos/261/1265/4353",
+                "vimeo_player_url": "https://player.vimeo.com/video/503727684?h=0666839f9c&app_id=122963"
+            }
+        ]
+    },
+    {
+        "titulo": "Módulo 4: Procedimiento aduanero",
+        "n_cap": "2 Cápsulas",
+        "capsulas": [
+            {
+                "cap_titulo": "Cápsula 1. Modalidades de despacho y canales de control",
+                "url": "https://netzun.com/mis-contenidos/cursos/261/1267/4356",
+                "vimeo_player_url": "https://player.vimeo.com/video/503728517?h=5d84a20d20&app_id=122963"
+            },
+            {
+                "cap_titulo": "Cápsula 25.  tips para una importación exitosa",
+                "url": "https://netzun.com/mis-contenidos/cursos/261/1267/4357",
+                "vimeo_player_url": "https://player.vimeo.com/video/503728669?h=13fc0286ab&app_id=122963"
+            }
+        ]
+    }
+]
