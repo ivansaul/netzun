@@ -1,3 +1,5 @@
+#!/bin/bash
+
 # Install chrome
 wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
 sudo apt install ./google-chrome-stable_current_amd64.deb
@@ -5,7 +7,7 @@ sudo apt install ./google-chrome-stable_current_amd64.deb
 # Install chromedriver
 # https://chromedriver.chromium.org/downloads
 wget https://chromedriver.storage.googleapis.com/110.0.5481.77/chromedriver_linux64.zip
-tar -xvzf chromedriver*
+unzip chromedriver*
 sudo chmod +x chromedriver
 sudo mv chromedriver /usr/bin/chromedriver
 
