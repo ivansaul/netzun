@@ -1,4 +1,7 @@
 # Custom
+*.mp4
+*.deb
+*.tar.gz
 chromedriver
 geckodriver
 

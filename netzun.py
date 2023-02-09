@@ -16,7 +16,7 @@ class NetzunDL:
     def __init__(self, table_of_content: dict):
         self.table_of_content = table_of_content
 
-    def mp4_downloader(self, filename:str, url: str):
+    def mp4_downloader(self, filename:str, url: str, dest='videos'):
         """
         Download any .mp4  video
         """
@@ -26,7 +26,7 @@ class NetzunDL:
         block_size = 1024
         wrote = 0
 
-        with open(f"{filename}.mp4", 'wb') as f:
+        with open(f"{dest}/{filename}.mp4", 'wb') as f:
             for chunk in tqdm(response.iter_content(block_size), total=total_size//block_size, unit='MB', unit_scale=True, desc=filename):
                 wrote = wrote + len(chunk)
                 f.write(chunk)
@@ -93,13 +93,25 @@ class Netzun:
         self.login_url = "https://netzun.com/ingresar"
         self.table_of_content = []
 
+    def logout(self):
+        self.driver.quit()
+    
     def login(self):
 
-        # initialize the firefox driver
-        #driver = webdriver.Firefox() 
+        ## Firefox options en modo headless
+        # options = webdriver.FirefoxOptions()
+        #options.add_argument('--headless')
+        #options.add_argument('--disable-gpu')
+        ## initialize the firefox driver
+        #self.driver = webdriver.Firefox() 
 
+        # Chrome options en modo headless
+        options = webdriver.ChromeOptions()
+        options.add_argument('--headless')
+        options.add_argument('--disable-gpu')
         # initialize the chrome driver
         self.driver = webdriver.Chrome("chromedriver")
+        
         # go to netzun login page
         self.driver.get(self.login_url)
     
@@ -173,9 +185,14 @@ class Netzun:
 
 
     def add_content_vimeo_url(self):
+        i,j = 1, sum([len(x['capsulas']) for x in self.table_of_content])
         for tc in self.table_of_content:
             for c in tc['capsulas']:
-                c['vimeo_player_url'] = self.get_vimeo_url(url=c['url']) 
+                c['vimeo_player_url'] = self.get_vimeo_url(url=c['url'])
+                # imprime el recorrido
+                print(f"[{i}/{j}]")
+                i+=1  
+
         
         with open('table_of_content.json','w', encoding='utf-8') as file:
             json.dump(self.table_of_content, file, indent=4, ensure_ascii= False)
@@ -206,19 +223,21 @@ if __name__ == "__main__":
 
     # url course
     url_course =  "https://netzun.com/mis-contenidos/cursos/261/1264/4346"
+    url_course = "https://netzun.com/mis-contenidos/cursos/47/237/984"
 
     
-    # ntz = Netzun(email, password, url_course)
-    # ntz.login()
-    # ntz.get_table_of_content()
-    # ntz.add_content_vimeo_url()
+    ntz = Netzun(email, password, url_course)
+    ntz.login()
+    ntz.get_table_of_content()
+    ntz.add_content_vimeo_url()
+    ntz.logout()
 
 
-    with open('table_of_content.json','r') as file:
-        table_of_content = json.load(file)
-
-    dl = NetzunDL(table_of_content = table_of_content)
-    dl.dl_course(quality='best')
+#    with open('table_of_content.json','r') as file:
+#        table_of_content = json.load(file)
+#
+#    dl = NetzunDL(table_of_content = table_of_content)
+#    dl.dl_course(quality='worst')
 
   
-    sleep(100)
+#    sleep(100)
