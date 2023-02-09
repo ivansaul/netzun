@@ -99,18 +99,18 @@ class Netzun:
     def login(self):
 
         ## Firefox options en modo headless
-        # options = webdriver.FirefoxOptions()
+        #options = webdriver.FirefoxOptions()
         #options.add_argument('--headless')
         #options.add_argument('--disable-gpu')
         ## initialize the firefox driver
-        #self.driver = webdriver.Firefox() 
+        self.driver = webdriver.Firefox(options=options) 
 
         # Chrome options en modo headless
         options = webdriver.ChromeOptions()
         options.add_argument('--headless')
         options.add_argument('--disable-gpu')
         # initialize the chrome driver
-        self.driver = webdriver.Chrome("chromedriver")
+        self.driver = webdriver.Chrome("chromedriver", options=options)
         
         # go to netzun login page
         self.driver.get(self.login_url)
