@@ -1,3 +1,12 @@
+# Custom
+*.mp4
+*.deb
+*.tar.gz
+chromedriver
+geckodriver
+table_of_content.json
+table_of_content.md
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
