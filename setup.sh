@@ -1,8 +1,8 @@
 #!/bin/bash
 
-# Install chrome
-wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
-sudo apt install ./google-chrome-stable_current_amd64.deb
+# Install chromium
+sudo apt update
+sudo apt install chromium-browser
 
 # Install chromedriver
 # https://chromedriver.chromium.org/downloads

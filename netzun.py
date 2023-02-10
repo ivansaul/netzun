@@ -92,6 +92,8 @@ class Netzun:
         self.url_course = url_course
         self.login_url = "https://netzun.com/ingresar"
         self.table_of_content = []
+        self.course_name = ""
+        self.course_description = ""
 
     def logout(self):
         self.driver.quit()
@@ -103,7 +105,7 @@ class Netzun:
         #options.add_argument('--headless')
         #options.add_argument('--disable-gpu')
         ## initialize the firefox driver
-        self.driver = webdriver.Firefox(options=options) 
+        #self.driver = webdriver.Firefox(options=options) 
 
         # Chrome options en modo headless
         options = webdriver.ChromeOptions()
@@ -148,6 +150,12 @@ class Netzun:
         html = self.get_source_code(self.url_course)
 
         soup = BeautifulSoup(html, "html.parser")
+
+        # first search course name and description
+        self.course_name = soup.find("div", class_="course-name").text
+        self.course_description = soup.find("div", class_="description").text
+
+        # Second search modulos and capsulas
         div_modules = soup.find("div", class_="modules")
 
         li_modules = div_modules.find_all("li", class_=re.compile("accordion__item"))
@@ -184,6 +192,22 @@ class Netzun:
         return self.table_of_content
 
 
+    def write_table_of_content(self):
+        """
+        Crea un archivo md con la tabla de contenido y el nombre del curso
+        """           
+
+        with open('table_of_content.md', 'w') as file:
+            file.write(f"# {self.course_name}\n\n")
+            file.write(f"{self.course_description}\n\n")
+
+            for tc in self.table_of_content:
+                file.write(f"## {tc['titulo']}\n\n")
+                for c in tc['capsulas']:
+                    file.write(f"- {c['cap_titulo']}\n")
+                file.write("\n")
+
+    
     def add_content_vimeo_url(self):
         i,j = 1, sum([len(x['capsulas']) for x in self.table_of_content])
         for tc in self.table_of_content:
@@ -229,6 +253,7 @@ if __name__ == "__main__":
     ntz = Netzun(email, password, url_course)
     ntz.login()
     ntz.get_table_of_content()
+    ntz.write_table_of_content()
     ntz.add_content_vimeo_url()
     ntz.logout()
 
