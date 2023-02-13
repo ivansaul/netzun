@@ -6,6 +6,7 @@ chromedriver
 geckodriver
 table_of_content.json
 table_of_content.md
+modules.json
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
