@@ -1,3 +1,4 @@
+import os
 import re
 import sys
 import json
@@ -6,6 +7,7 @@ from tqdm import tqdm
 from time import sleep
 from pprint import pprint
 from bs4 import BeautifulSoup
+from moviepy.editor import VideoFileClip, concatenate_audioclips
 
 from selenium import webdriver
 from selenium.webdriver.common.by import By
@@ -16,6 +18,7 @@ from selenium.webdriver.support import expected_conditions as EC
 class NetzunDL:
     def __init__(self, table_of_content: dict):
         self.table_of_content = table_of_content
+  
 
     def mp4_downloader(self, filename:str, url: str, dest='videos'):
         """
@@ -32,22 +35,35 @@ class NetzunDL:
                 wrote = wrote + len(chunk)
                 f.write(chunk)
         
+    def make_podcast(self, file_name, src='videos', dest='videos'):
+        """
+        Crea un archivo mp3 unificado a partir de los videos descargados del curso
+        """
 
-    def dl_course(self, quality = 'best'):
+        videos = os.listdir(src)
+        videos.sort()
+        videos = [v for v in videos if v.endswith('.mp4')]
+        videos = [f'{src}/{v}' for v in videos]
+        audio = [VideoFileClip(v).audio for v in videos]
+        audio = concatenate_audioclips(audio)
+        audio.write_audiofile(f"{dest}/{file_name}.mp3")
+
+
+    def dl_course(self, quality = 'best', dest = 'videos'):
         """
         Download all course videos(presentacion + capsulas)
         """
 
         # Presentation
         mp4_url = self.get_mp4_url_from_vimeo(self.table_of_content['url_vimeo_presentation'], quality = quality)
-        self.mp4_downloader(f'Módulo 0 - Presentación del curso. {self.table_of_content["course_name"]}', mp4_url)
+        self.mp4_downloader(f'Módulo 0 - Presentación del curso. {self.table_of_content["course_name"]}', mp4_url, dest=dest)
 
         # Modules
         for k, i in enumerate(self.table_of_content['modules']):
             for j in i['capsulas']:
                 filename = f"Módulo {k+1} - {j['cap_titulo']}"
                 mp4_url = self.get_mp4_url_from_vimeo(j['url_vimeo'], quality = quality)
-                self.mp4_downloader(filename= filename, url=mp4_url)
+                self.mp4_downloader(filename= filename, url=mp4_url, dest=dest)
 
 
     def get_mp4_url_from_vimeo(self, url_vimeo:str , quality = 'best'):
@@ -105,10 +121,10 @@ class Netzun:
         self.url_vimeo_presentation = ""
 
         # Chrome / firefox options en modo headless
-        self.chrome_options = webdriver.ChromeOptions()
+        #self.chrome_options = webdriver.ChromeOptions()
         #self.chrome_options.add_argument('--headless')
         #self.chrome_options.add_argument('--disable-gpu')
-        #self.firefox_options = webdriver.FirefoxOptions()
+        self.firefox_options = webdriver.FirefoxOptions()
         #self.firefox_options.add_argument('--headless')
         #self.firefox_options.add_argument('--disable-gpu')
 
@@ -118,10 +134,10 @@ class Netzun:
     def login(self):
 
         ## initialize the firefox driver
-        #self.driver = webdriver.Firefox(options=self.firefox_options) 
+        self.driver = webdriver.Firefox(options=self.firefox_options) 
 
         # initialize the chrome driver
-        self.driver = webdriver.Chrome("chromedriver", options=self.chrome_options)
+        #self.driver = webdriver.Chrome("chromedriver", options=self.chrome_options)
         
         # go to netzun login page
         self.driver.get(self.url_login)
@@ -156,8 +172,12 @@ class Netzun:
     
 
     def get_url_vimeo_presentation(self):
+        """
+        Obtine la url_vimeo de la presentacion del curso
+        """
         
-        self.driver = webdriver.Chrome("chromedriver", options=self.chrome_options)
+        #self.driver = webdriver.Chrome("chromedriver", options=self.chrome_options)
+        self.driver = webdriver.Firefox(options=self.firefox_options)
         self.url_vimeo_presentation = self.get_url_vimeo(url=self.url_course)
 
 
@@ -236,6 +256,9 @@ class Netzun:
 
     
     def add_url_vimeo_to_modules(self):
+        """
+        Añade la url_vimeo a los capsulas
+        """
         i,j = 1, sum([len(x['capsulas']) for x in self.modules])
         for md in self.modules:
             print(md['titulo'])
@@ -274,27 +297,20 @@ if __name__ == "__main__":
     password = "bopil28307@bymercy.com"
 
     # url course
-    url_course =  "https://netzun.com/mis-contenidos/cursos/261/1264/4346"
-    url_course = "https://netzun.com/mis-contenidos/cursos/47/237/984"
-    url_course = "https://netzun.com/mis-contenidos/cursos/434/2108/7139"
     url_course = "https://netzun.com/cursos-online/business-manager-facebook"
 
     
-    ntz = Netzun(email, password, url_course)
-    
+    ntz = Netzun(email, password, url_course)    
     ntz.get_url_vimeo_presentation()
     ntz.quit()
-    
+
     ntz.login()
     ntz.get_modules_content()
     ntz.add_url_vimeo_to_modules()
     ntz.quit()
     
-    
     ntz.write_table_of_content()
 
     dl = NetzunDL(table_of_content = ntz.table_of_content)
     dl.dl_course(quality='worst')
-
-  
-#    sleep(100)
+    dl.make_podcast(file_name= ntz.course_name)
