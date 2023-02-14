@@ -311,6 +311,8 @@ if __name__ == "__main__":
     password = input('Enter your password:')
     url_course = input("Enter the URL of the course to dowload: ")
 
+    print("\n\n")
+
     ntz = Netzun(email, password, url_course, browser='firefox')    
     ntz.get_url_vimeo_presentation()
     ntz.quit()
@@ -323,5 +325,5 @@ if __name__ == "__main__":
     ntz.write_table_of_content()
 
     dl = NetzunDL(table_of_content = ntz.table_of_content)
-    dl.dl_course(quality='worst')
+    dl.dl_course(quality='best')
     dl.make_podcast(file_name= ntz.course_name)
