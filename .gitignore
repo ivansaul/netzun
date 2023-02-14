@@ -1,4 +1,5 @@
 # Custom
+*.mp3
 *.mp4
 *.deb
 *.tar.gz
@@ -6,6 +7,7 @@ chromedriver
 geckodriver
 table_of_content.json
 table_of_content.md
+modules.json
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
