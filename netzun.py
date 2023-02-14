@@ -109,7 +109,11 @@ class NetzunDL:
 
 
 class Netzun:
-    def __init__(self, email, password, url_course):
+    def __init__(self, email, password, url_course, browser):
+        """
+        browser: 'firefox', 'chrome'
+        """
+
         self.email = email
         self.password = password
         self.url_course = url_course
@@ -119,25 +123,26 @@ class Netzun:
         self.course_name = ""
         self.course_description = ""
         self.url_vimeo_presentation = ""
+        self.browser = browser
 
         # Chrome / firefox options en modo headless
-        #self.chrome_options = webdriver.ChromeOptions()
-        #self.chrome_options.add_argument('--headless')
-        #self.chrome_options.add_argument('--disable-gpu')
+        self.chrome_options = webdriver.ChromeOptions()
+        self.chrome_options.add_argument('--headless')
+        self.chrome_options.add_argument('--disable-gpu')
         self.firefox_options = webdriver.FirefoxOptions()
-        #self.firefox_options.add_argument('--headless')
-        #self.firefox_options.add_argument('--disable-gpu')
+        self.firefox_options.add_argument('--headless')
+        self.firefox_options.add_argument('--disable-gpu')
 
     def quit(self):
         self.driver.quit()
     
     def login(self):
 
-        ## initialize the firefox driver
-        self.driver = webdriver.Firefox(options=self.firefox_options) 
-
-        # initialize the chrome driver
-        #self.driver = webdriver.Chrome("chromedriver", options=self.chrome_options)
+        ## initialize the chrome / firefox driver
+        if self.browser == 'firefox':
+            self.driver = webdriver.Firefox(options=self.firefox_options)
+        elif self.browser == 'chrome':
+            self.driver = webdriver.Chrome("chromedriver", options=self.chrome_options)
         
         # go to netzun login page
         self.driver.get(self.url_login)
@@ -175,9 +180,12 @@ class Netzun:
         """
         Obtine la url_vimeo de la presentacion del curso
         """
-        
-        #self.driver = webdriver.Chrome("chromedriver", options=self.chrome_options)
-        self.driver = webdriver.Firefox(options=self.firefox_options)
+
+        if self.browser == 'firefox':
+            self.driver = webdriver.Firefox(options=self.firefox_options)
+        elif self.browser == 'chrome':
+            self.driver = webdriver.Chrome("chromedriver", options=self.chrome_options)
+
         self.url_vimeo_presentation = self.get_url_vimeo(url=self.url_course)
 
 
@@ -293,14 +301,17 @@ class Netzun:
 if __name__ == "__main__":
 
     # Netzun credentials
-    email = "bopil28307@bymercy.com"
-    password = "bopil28307@bymercy.com"
+    #email = "bopil28307@bymercy.com"
+    #password = "bopil28307@bymercy.com"
 
     # url course
-    url_course = "https://netzun.com/cursos-online/business-manager-facebook"
-
+    #url_course = "https://netzun.com/cursos-online/como-mantener-lealtad-clientes"
     
-    ntz = Netzun(email, password, url_course)    
+    email = input('Enter your e-mail: ')
+    password = input('Enter your password:')
+    url_course = input("Enter the URL of the course to dowload: ")
+
+    ntz = Netzun(email, password, url_course, browser='firefox')    
     ntz.get_url_vimeo_presentation()
     ntz.quit()
 
