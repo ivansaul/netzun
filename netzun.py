@@ -24,16 +24,9 @@ class NetzunDL:
         """
         Download any .mp4  video
         """
-        response = requests.get(url, stream=True)
-
-        total_size = int(response.headers.get('content-length', 0))
-        block_size = 1024
-        wrote = 0
-
-        with open(f"{dest}/{filename}.mp4", 'wb') as f:
-            for chunk in tqdm(response.iter_content(block_size), total=total_size//block_size, unit='MB', unit_scale=True, desc=filename):
-                wrote = wrote + len(chunk)
-                f.write(chunk)
+        import subprocess
+        command = ["aria2c", "-s", "15", "-x", "15", "-k", "1M", "--out", f"{dest}/{filename}.mp4", url]
+        subprocess.run(command, check=True)
         
     def make_podcast(self, file_name, src='videos', dest='videos'):
         """
